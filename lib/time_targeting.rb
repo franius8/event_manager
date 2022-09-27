@@ -48,7 +48,7 @@ class BestHoursChecker
             end
          end
          
-         print "The best hours for adverstising are #{@best_hours.join(', ')}"
+         print "The best hours for advertising are #{@best_hours.join(', ')}"
     end
 end
 
