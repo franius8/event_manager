@@ -1,55 +1,58 @@
+# frozen_string_literal: true
+
 require 'csv'
 
+# Check for best hours to use in advertising
 class BestHoursChecker
-    def initialize(filename)
-        @filename = filename
-        @contents = define_contents
-        @registration_hours = []
-        @hours = Array.new(23)
-        @highest_number_registered = 0
+  def initialize(filename)
+    @filename = filename
+    @contents = define_contents
+    @registration_hours = []
+    @hours = Array.new(23)
+    @highest_number_registered = 0
+    @best_hours = []
+
+    perform_check
+  end
+
+  def define_contents
+    CSV.open(
+      @filename,
+      headers: true,
+      header_converters: :symbol
+    )
+  end
+
+  def perform_check
+    convert_hours
+    print_hours
+    check_best_hours
+  end
+
+  def convert_hours
+    @contents.each { |row| @registration_hours << DateTime.strptime(row[:regdate], '%m/%d/%y %k:%M').hour }
+  end
+
+  def print_hours
+    @hours.each_index do |index|
+      @hours[index] = @registration_hours.count(index)
+      puts "#{index}: \t#{@hours[index]} users registered"
+    end
+  end
+
+  def check_best_hours
+    @hours.each_with_index do |number, hour|
+      if @highest_number_registered < number
+        @highest_number_registered = number
         @best_hours = []
-
-        perform_check
+        @best_hours << hour
+      elsif @highest_number_registered == number
+        @best_hours << hour
+      end
     end
 
-    def define_contents
-        CSV.open(
-            @filename,
-            headers: true,
-            header_converters: :symbol
-          )
-     end
-    
-    def perform_check
-        convert_hours
-        print_hours
-        check_best_hours
-    end
-
-    def convert_hours
-        @contents.each {|row| @registration_hours << DateTime.strptime(row[:regdate], '%m/%d/%y %k:%M').hour}
-    end
-
-    def print_hours
-        @hours.each_index do |index|
-            @hours[index] = @registration_hours.count(index)
-            puts "#{index}: \t#{@hours[index]} users registered"
-          end
-    end
-
-    def check_best_hours
-        @hours.each_with_index do |number, hour|
-            if @highest_number_registered < number
-             @highest_number_registered = number
-             @best_hours = []
-             @best_hours << hour
-            elsif @highest_number_registered == number
-             @best_hours << hour
-            end
-         end
-         
-         print "The best hours for advertising are #{@best_hours.join(', ')}"
-    end
+    print "The best hours for advertising are #{@best_hours.join(', ')}"
+  end
 end
 
 BestHoursChecker.new('event_attendees.csv')
