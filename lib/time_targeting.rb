@@ -1,12 +1,9 @@
 require 'csv'
 
 class BestHoursChecker
-    def initialize
-        @contents = CSV.open(
-            'event_attendees.csv',
-            headers: true,
-            header_converters: :symbol
-          )
+    def initialize(filename)
+        @filename = filename
+        @contents = define_contents
         @registration_hours = []
         @hours = Array.new(23)
         @highest_number_registered = 0
@@ -15,6 +12,14 @@ class BestHoursChecker
         perform_check
     end
 
+    def define_contents
+        CSV.open(
+            @filename,
+            headers: true,
+            header_converters: :symbol
+          )
+     end
+    
     def perform_check
         convert_hours
         print_hours
@@ -47,4 +52,4 @@ class BestHoursChecker
     end
 end
 
-BestHoursChecker.new
+BestHoursChecker.new('event_attendees.csv')
