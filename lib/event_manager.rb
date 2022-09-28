@@ -53,5 +53,4 @@ contents.each do |row|
   form_letter = erb_template.result(binding)
 
   save_thank_you_letter(id,form_letter)
-  end
 end
