@@ -2,6 +2,7 @@
 
 require 'csv'
 
+# Elements common for checking best hours and best weekdays
 module CommonElements
   def define_contents
     CSV.open(
@@ -15,7 +16,6 @@ module CommonElements
     DateTime.strptime(row[:regdate], '%m/%d/%y %k:%M')
   end
 end
-
 
 # Check for best hours to use in advertising
 class BestHoursChecker
@@ -63,16 +63,17 @@ class BestHoursChecker
   end
 end
 
+# Check for best weekdays to use in advertising
 class BestWeekdayChecker
   include CommonElements
   def initialize(filename)
     @filename = filename
     @contents = define_contents
     @registration_weekdays = []
-    @weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+    @weekdays = %w[Sunday Monday Tuesday Wednesday Thursday Friday Saturday]
     @highest_number_registered = 0
     @best_weekdays = []
-    
+
     perform_check
   end
 
