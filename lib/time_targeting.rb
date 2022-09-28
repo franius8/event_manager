@@ -17,6 +17,16 @@ module CommonElements
   end
 end
 
+# Check for best hours and weekdays to use in advertising
+class AdverstisingChecker
+  include CommonElements
+  def initialize(filename)
+  @filename = filename
+  BestHoursChecker.new(@filename)
+  BestWeekdayChecker.new(@filename)
+  end
+end
+
 # Check for best hours to use in advertising
 class BestHoursChecker
   include CommonElements
@@ -59,7 +69,7 @@ class BestHoursChecker
       end
     end
 
-    print "The best hours for advertising are #{@best_hours.join(', ')}"
+    puts "The best hours for advertising are #{@best_hours.join(', ')}"
   end
 end
 
@@ -104,8 +114,8 @@ class BestWeekdayChecker
         @best_weekdays << day
       end
     end
-    print "The best weekdays for advertising are #{@best_weekdays.join(', ')}"
+    puts "The best weekdays for advertising are #{@best_weekdays.join(', ')}"
   end
 end
 
-BestWeekdayChecker.new('event_attendees.csv')
+AdverstisingChecker.new('event_attendees.csv')
