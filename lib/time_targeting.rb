@@ -21,9 +21,9 @@ end
 class AdverstisingChecker
   include CommonElements
   def initialize(filename)
-  @filename = filename
-  BestHoursChecker.new(@filename)
-  BestWeekdayChecker.new(@filename)
+    @filename = filename
+    BestHoursChecker.new(@filename)
+    BestWeekdayChecker.new(@filename)
   end
 end
 
