@@ -2,8 +2,24 @@
 
 require 'csv'
 
+module CommonElements
+  def define_contents
+    CSV.open(
+      @filename,
+      headers: true,
+      header_converters: :symbol
+    )
+  end
+
+  def convert_to_date(row)
+    DateTime.strptime(row[:regdate], '%m/%d/%y %k:%M')
+  end
+end
+
+
 # Check for best hours to use in advertising
 class BestHoursChecker
+  include CommonElements
   def initialize(filename)
     @filename = filename
     @contents = define_contents
@@ -15,14 +31,6 @@ class BestHoursChecker
     perform_check
   end
 
-  def define_contents
-    CSV.open(
-      @filename,
-      headers: true,
-      header_converters: :symbol
-    )
-  end
-
   def perform_check
     convert_hours
     print_hours
@@ -30,7 +38,7 @@ class BestHoursChecker
   end
 
   def convert_hours
-    @contents.each { |row| @registration_hours << DateTime.strptime(row[:regdate], '%m/%d/%y %k:%M').hour }
+    @contents.each { |row| @registration_hours << convert_to_date(row).hour }
   end
 
   def print_hours
@@ -55,4 +63,19 @@ class BestHoursChecker
   end
 end
 
-BestHoursChecker.new('event_attendees.csv')
+class BestWeekdayChecker
+  include CommonElements
+  def initialize(filename)
+    @filename = filename
+    @contents = define_contents
+    @registration_weekdays = []
+    convert_dates
+  end
+
+  def convert_dates
+    @contents.each { |row| @registration_weekdays << convert_to_date(row).strftime('%A') }
+    puts @registration_weekdays.tally
+  end
+end
+
+BestWeekdayChecker.new('event_attendees.csv')
